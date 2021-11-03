@@ -1,4 +1,4 @@
-package me.inassar.cryptocurrency.ui.theme
+package me.inassar.cryptocurrency.presentation.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

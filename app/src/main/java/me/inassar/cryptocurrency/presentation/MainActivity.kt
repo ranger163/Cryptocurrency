@@ -1,4 +1,4 @@
-package me.inassar.cryptocurrency
+package me.inassar.cryptocurrency.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,7 +8,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import me.inassar.cryptocurrency.ui.theme.CoinPaprikaPracticeTheme
+import me.inassar.cryptocurrency.presentation.ui.theme.CoinPaprikaPracticeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
