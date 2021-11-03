@@ -1,5 +1,7 @@
 package me.inassar.cryptocurrency.domain.repository
 
+import kotlinx.coroutines.flow.Flow
+import me.inassar.cryptocurrency.common.Resource
 import me.inassar.cryptocurrency.data.remote.dto.CoinDetailResponseDto
 import me.inassar.cryptocurrency.data.remote.dto.CoinResponseDto
 
@@ -12,7 +14,7 @@ import me.inassar.cryptocurrency.data.remote.dto.CoinResponseDto
  */
 interface CoinRepository {
 
-    suspend fun getCoins(): List<CoinResponseDto>
+    fun getCoins(): Flow<Resource<List<CoinResponseDto>>>
 
-    suspend fun getCoinDetail(coinId: String): CoinDetailResponseDto
+    fun getCoinDetail(coinId: String): Flow<Resource<CoinDetailResponseDto>>
 }

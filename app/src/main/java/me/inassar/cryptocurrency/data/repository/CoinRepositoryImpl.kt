@@ -1,8 +1,12 @@
 package me.inassar.cryptocurrency.data.repository
 
-import me.inassar.cryptocurrency.data.remote.CoinPaprikaApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import me.inassar.cryptocurrency.common.Resource
 import me.inassar.cryptocurrency.data.remote.dto.CoinDetailResponseDto
 import me.inassar.cryptocurrency.data.remote.dto.CoinResponseDto
+import me.inassar.cryptocurrency.data.remote.source.CoinsRemote
 import me.inassar.cryptocurrency.domain.repository.CoinRepository
 import javax.inject.Inject
 
@@ -15,15 +19,24 @@ import javax.inject.Inject
  * @constructor Create empty Coin repository impl
  */
 class CoinRepositoryImpl @Inject constructor(
-    private val remote: CoinPaprikaApi
+    private val remote: CoinsRemote
 ) : CoinRepository {
+
     /**
      * Get coins
      * Making a remote call and requesting for a list of coins.
      * @return
      */
-    override suspend fun getCoins(): List<CoinResponseDto> =
-        remote.getCoins()
+    override fun getCoins(): Flow<Resource<List<CoinResponseDto>>> = flow {
+        when (val response = remote.getCoins()) {
+            is Resource.Error -> emit(Resource.error(response.errorMessage))
+            is Resource.Success -> emit(Resource.success(response.data))
+        }
+    }.catch {
+        it.localizedMessage?.let { errorMessage ->
+            emit(Resource.error(errorMessage))
+        }
+    }
 
     /**
      * Get coin detail
@@ -31,6 +44,14 @@ class CoinRepositoryImpl @Inject constructor(
      * @param coinId
      * @return
      */
-    override suspend fun getCoinDetail(coinId: String): CoinDetailResponseDto =
-        remote.getCoinDetails(coinId)
+    override fun getCoinDetail(coinId: String): Flow<Resource<CoinDetailResponseDto>> = flow {
+        when (val response = remote.getCoinDetail(coinId)) {
+            is Resource.Error -> emit(Resource.error(response.errorMessage))
+            is Resource.Success -> emit(Resource.success(response.data))
+        }
+    }.catch {
+        it.localizedMessage?.let { errorMessage ->
+            emit(Resource.error(errorMessage))
+        }
+    }
 }
