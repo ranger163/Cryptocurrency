@@ -7,4 +7,11 @@ package me.inassar.cryptocurrency.common
  * @constructor Create empty Constants
  */
 object Constants {
+
+    const val BASE_URL = "https://api.coinpaprika.com/"
+
+    const val PARAM_COIN_ID = "coinId"
+
+    const val ENDPOINT_GET_COINS_LIST = "/v1/coins"
+    const val ENDPOINT_GET_COIN_DETAIL = "/v1/coins/{$PARAM_COIN_ID}"
 }
