@@ -1,13 +1,15 @@
 package me.inassar.cryptocurrency.presentation.coinDetails
 
-import androidx.lifecycle.*
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.inassar.cryptocurrency.common.Constants
 import me.inassar.cryptocurrency.common.Resource
-import me.inassar.cryptocurrency.common.ViewState
-import me.inassar.cryptocurrency.domain.model.CoinDetail
 import me.inassar.cryptocurrency.domain.usesCase.getCoin.GetCoinUseCase
 import javax.inject.Inject
 
@@ -27,8 +29,8 @@ class CoinDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _coinDetailState = MutableLiveData<ViewState<CoinDetail>>()
-    val coinDetailState: LiveData<ViewState<CoinDetail>> = _coinDetailState
+    private val _coinDetailState = mutableStateOf(CoinDetailState())
+    val coinDetailState: State<CoinDetailState> = _coinDetailState
 
     init {
         savedStateHandle.get<String>(Constants.PARAM_COIN_ID)?.let {
@@ -38,10 +40,12 @@ class CoinDetailsViewModel @Inject constructor(
 
     private fun getCoinDetail(coinId: String) {
         getCoinUseCase(coinId).onEach {
-            _coinDetailState.value = ViewState.loading()
+            _coinDetailState.value = CoinDetailState(isLoading = true)
             when (it) {
-                is Resource.Error -> _coinDetailState.value = ViewState.error(it.errorMessage)
-                is Resource.Success -> _coinDetailState.value = ViewState.success(it.data)
+                is Resource.Error -> _coinDetailState.value =
+                    CoinDetailState(error = it.errorMessage)
+                is Resource.Success -> _coinDetailState.value =
+                    CoinDetailState(coinDetail = it.data)
             }
         }.launchIn(viewModelScope)
     }
